@@ -4,9 +4,9 @@ let   GENDER  = "mens-college-basketball";
 const BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball";
 
 /* ===== Replace these with your real values ===== */
-const NETLIFY_ODDS_FN = "https://YOUR-NETLIFY-SITE.netlify.app/.netlify/functions/odds"; // <— change
-const SUPABASE_URL  = "https://YOUR-PROJECT.supabase.co";                                  // <— change
-const SUPABASE_ANON = "YOUR_PUBLIC_ANON_KEY";                                              // <— change
+const NETLIFY_ODDS_FN = "https://https://gatorshoop.netlify.app//.netlify/functions/odds"; // <— change
+const SUPABASE_URL  = "https://rydpaqzentkqlwjgxpbt.supabase.co";                                  // <— change
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5ZHBhcXplbnRrcWx3amd4cGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzMDczOTgsImV4cCI6MjA3Nzg4MzM5OH0.dyw38h9QOLHXLaERz9aG-3fvup70lKoDaFfzEBTNqjg";                                              // <— change
 
 /* ===== Supabase client ===== */
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
