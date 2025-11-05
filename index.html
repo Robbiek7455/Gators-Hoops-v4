@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=12"/>
+  <link rel="stylesheet" href="style.css?v=14"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -18,7 +18,7 @@
       </div>
       <div class="controls">
         <label class="meta">Team</label>
-        <select id="gender">
+        <select id="gender" aria-label="Team selector">
           <option value="mens-college-basketball" selected>Men's</option>
           <option value="womens-college-basketball">Women's</option>
         </select>
@@ -129,7 +129,7 @@
         </div>
         <div class="card">
           <h3 style="margin:0 0 10px 0">Team Points by Game</h3>
-          <canvas id="teamPtsChart" height="220"></canvas>
+          <canvas id="teamPtsChart" height="240"></canvas>
         </div>
       </div>
     </section>
@@ -157,6 +157,6 @@
     <small>Not affiliated with UF. Data from public ESPN JSON. Odds & props are for entertainment only.</small>
   </footer>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
