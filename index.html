@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=8"/>
-  <link rel="manifest" href="manifest.webmanifest"/>
-  <link rel="apple-touch-icon" href="icons/ios-180.png"/>
+  <link rel="stylesheet" href="style.css?v=12"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- Top bar -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">
@@ -20,7 +17,7 @@
         <h1>Gator Hoops</h1>
       </div>
       <div class="controls">
-        <label class="meta" style="color:#eef">Team</label>
+        <label class="meta">Team</label>
         <select id="gender">
           <option value="mens-college-basketball" selected>Men's</option>
           <option value="womens-college-basketball">Women's</option>
@@ -30,7 +27,6 @@
     </div>
   </header>
 
-  <!-- Logos strip (with fallbacks) -->
   <div class="brands">
     <img alt="UF" loading="lazy"
          src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg"
@@ -43,7 +39,6 @@
          onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/9/9d/NCAA_logo.svg'">
   </div>
 
-  <!-- Hero -->
   <section class="hero" aria-label="Highlights">
     <div class="carousel">
       <img id="heroImg" alt="Florida Gators Highlights"/>
@@ -61,7 +56,6 @@
     </div>
   </section>
 
-  <!-- Tabs -->
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" class="tab" id="tab-schedule" aria-controls="panel-schedule" aria-selected="true">Schedule</button>
     <button type="button" class="tab" id="tab-roster"   aria-controls="panel-roster"   aria-selected="false">Roster</button>
@@ -75,12 +69,6 @@
     <!-- Schedule -->
     <section id="panel-schedule" class="section active" role="tabpanel" aria-labelledby="tab-schedule">
       <button id="addAllBtn" class="allcal-btn" type="button">Add All Games to Calendar</button>
-      <div id="allcal-menu" class="allcal-menu">
-        <div class="menu">
-          <a id="allcal-apple" href="#"> Apple/Outlook (.ics)</a>
-          <a id="allcal-google" href="https://calendar.google.com/calendar/u/0/r/settings/import" target="_blank" rel="noopener">Google Calendar (Import)</a>
-        </div>
-      </div>
       <div id="nextGame" class="next-wrap"></div>
       <div id="scheduleList" class="grid"></div>
     </section>
@@ -169,6 +157,6 @@
     <small>Not affiliated with UF. Data from public ESPN JSON. Odds & props are for entertainment only.</small>
   </footer>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>
