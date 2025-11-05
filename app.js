@@ -5,8 +5,8 @@ const BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball";
 const GOOGLE_IMPORT_URL = "https://calendar.google.com/calendar/u/0/r/settings/import";
 
 /* ===== Supabase (Leaderboard) — replace with your own ===== */
-const SUPABASE_URL  = "https://YOUR.supabase.co";      // <-- replace
-const SUPABASE_ANON = "YOUR_PUBLIC_ANON_KEY";          // <-- replace
+const SUPABASE_URL  = "https://rydpaqzentkqlwjgxpbt.supabase.co";      // <-- replace
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5ZHBhcXplbnRrcWx3amd4cGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzMDczOTgsImV4cCI6MjA3Nzg4MzM5OH0.dyw38h9QOLHXLaERz9aG-3fvup70lKoDaFfzEBTNqjg";          // <-- replace
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ===== Netlify Odds Function URL — replace with your site ===== */
