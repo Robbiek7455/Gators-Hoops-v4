@@ -59,25 +59,14 @@ main{padding:14px;max-width:980px;margin:0 auto}
 .btn{padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
 .btn.primary{background:var(--uf-orange);color:#fff;border:0}
 .note{font-size:12px;color:#6b7280}
-.spinner{width:18px;height:18px;border-radius:50%;border:2px solid #e5e7eb;border-top-color:var(--uf-blue);animation:spin .9s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-.head{width:56px;height:56px;border-radius:28px;background:#eef2f7;object-fit:cover}
+.statgrid{display:grid;grid-template-columns:repeat(6,minmax(60px,1fr));gap:8px}
+.stat .t{font-size:12px;color:var(--muted)}
+.stat .v{font-weight:800}
 
-.cal-wrap{ position:relative; display:inline-block }
-.cal-btn{ padding:6px 10px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; font:inherit; cursor:pointer }
-.cal-menu{ position:absolute; right:0; top:40px; background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 6px 18px rgba(10,12,16,.12); min-width:220px; overflow:hidden; display:none; z-index:100 }
-.cal-menu a{ display:block; padding:10px 12px; text-decoration:none; color:#111; font-size:14px }
-.cal-menu a:hover{ background:#f7fafc }
+.odds-row{display:flex;gap:10px;flex-wrap:wrap}
+.odds-chip{background:#f7fafc;border:1px solid #edf2f7;border-radius:8px;padding:6px 8px;font-size:13px}
 
-.allcal-btn{ background:var(--uf-orange);color:#fff;border:0;padding:10px 16px;border-radius:10px;font:inherit;cursor:pointer;margin:12px 0;box-shadow:0 2px 5px rgba(0,0,0,.1) }
-.allcal-menu{ position:relative; display:none; margin-bottom:6px; }
-.allcal-menu.open{ display:block; }
-.allcal-menu .menu{ position:absolute; left:0; top:44px; background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 6px 18px rgba(10,12,16,.12); min-width:240px; overflow:hidden; z-index:100 }
-.allcal-menu a{ display:block; padding:10px 12px; text-decoration:none; color:#111; font-size:14px }
-.allcal-menu a:hover{ background:#f7fafc }
-
-/* Props UI */
 .prop-card{display:flex;gap:12px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #edf1f7;border-radius:12px;padding:12px}
 .prop-meta{font-size:13px;color:var(--muted)}
 .prop-title{font-weight:800}
@@ -85,12 +74,9 @@ main{padding:14px;max-width:980px;margin:0 auto}
 .toggle button{border:0;padding:6px 10px;background:#fff}
 .toggle button.active{background:#f7fafc;font-weight:700}
 
-/* Odds chips */
-.odds-row { display:flex; gap:10px; flex-wrap:wrap }
-.odds-chip { background:#f7fafc; border:1px solid #edf2f7; border-radius:8px; padding:6px 8px; font-size:13px }
+.list{display:flex;flex-direction:column;gap:8px}
+.lb{display:grid;grid-template-columns:48px 1fr 100px 100px;gap:8px;align-items:center}
+.lb .h{font-weight:700;color:var(--muted)}
+.lb .cell{padding:6px 8px;background:#f7fafc;border:1px solid #edf2f7;border-radius:8px}
 
-/* Leaderboard */
-.list {display:flex;flex-direction:column;gap:8px}
-.lb {display:grid;grid-template-columns:48px 1fr 100px 100px;gap:8px;align-items:center}
-.lb .h {font-weight:700;color:var(--muted)}
-.lb .cell {padding:6px 8px;background:#f7fafc;border:1px solid #edf2f7;border-radius:8px}
+.allcal-btn{background:var(--uf-orange);color:#fff;border:0;padding:10px 16px;border-radius:10px;font:inherit;cursor:pointer;margin:12px 0;box-shadow:0 2px 5px rgba(0,0,0,.1)}
