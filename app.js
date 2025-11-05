@@ -10,7 +10,7 @@ const SUPABASE_ANON = "YOUR_PUBLIC_ANON_KEY";          // <-- replace
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ===== Netlify Odds Function URL — replace with your site ===== */
-const NETLIFY_ODDS_FN = "https://YOUR-NETLIFY-SITE.netlify.app/.netlify/functions/odds"; // <-- replace
+const NETLIFY_ODDS_FN = "https://gatorshoop.netlify.app/.netlify/functions/odds"; // <-- replace
 
 /* Photos */
 const CHAMPIONSHIP_PHOTOS = [
