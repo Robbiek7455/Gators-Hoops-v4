@@ -3,10 +3,10 @@ const TEAM_ID = 57;
 let   GENDER  = "mens-college-basketball";
 const BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball";
 
-/* ===== Replace these with your real values ===== */
-const NETLIFY_ODDS_FN = "https://https://gatorshoop.netlify.app//.netlify/functions/odds"; // <— change
-const SUPABASE_URL  = "https://rydpaqzentkqlwjgxpbt.supabase.co";                                  // <— change
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5ZHBhcXplbnRrcWx3amd4cGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzMDczOTgsImV4cCI6MjA3Nzg4MzM5OH0.dyw38h9QOLHXLaERz9aG-3fvup70lKoDaFfzEBTNqjg";                                              // <— change
+/* ===== Your live services ===== */
+const NETLIFY_ODDS_FN = "https://gatorshoop.netlify.app/.netlify/functions/odds";
+const SUPABASE_URL  = "https://rydpaqzentkqlwjgxpbt.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5ZHBhcXplbnRrcWx3amd4cGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzMDczOTgsImV4cCI6MjA3Nzg4MzM5OH0.dyw38h9QOLHXLaERz9aG-3fvup70lKoDaFfzEBTNqjg";
 
 /* ===== Supabase client ===== */
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -20,20 +20,20 @@ const CHAMPIONSHIP_PHOTOS = [
   "https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg"
 ];
 
-/* ---- Roster fallback (so Roster always works) ---- */
+/* ---- Roster fallback ---- */
 const ROSTER_FALLBACK = [
-  { id:"fland0", number:"0",  fullName:"Boogie Fland",      position:"G",  classYear:"So.", height:"6'3\"",  weight:"185" },
-  { id:"lee1",   number:"1",  fullName:"Xaivian Lee",       position:"G",  classYear:"Sr.", height:"6'4\"",  weight:"180" },
-  { id:"hand3",  number:"3",  fullName:"Micah Handlogten",  position:"C",  classYear:"Sr.", height:"7'1\"",  weight:"260" },
-  { id:"lloyd4", number:"4",  fullName:"Alex Lloyd",        position:"G",  classYear:"Fr.", height:"6'3\"",  weight:"180" },
-  { id:"chin9",  number:"9",  fullName:"Rueben Chinyelu",   position:"C",  classYear:"Jr.", height:"6'10\"", weight:"265" },
-  { id:"haugh10",number:"10", fullName:"Thomas Haugh",      position:"F",  classYear:"Jr.", height:"6'9\"",  weight:"215" },
-  { id:"ingr11", number:"11", fullName:"CJ Ingram",         position:"G",  classYear:"Fr.", height:"6'6\"",  weight:"205" },
-  { id:"miki12", number:"12", fullName:"Viktor Mikic",      position:"C",  classYear:"So.", height:"6'11\"", weight:"260" },
-  { id:"brown20",number:"20", fullName:"Isaiah Brown",      position:"G",  classYear:"So.", height:"6'4\"",  weight:"210" },
-  { id:"cond21", number:"21", fullName:"Alex Condon",       position:"F/C",classYear:"Jr.", height:"6'11\"", weight:"236" },
-  { id:"aj23",   number:"23", fullName:"AJ Brown",          position:"G",  classYear:"R-Jr.", height:"6'4\"", weight:"210" },
-  { id:"riou32", number:"32", fullName:"Olivier Rioux",     position:"C",  classYear:"R-Fr.", height:"7'9\"", weight:"305" }
+  { id:"4576218", number:"0",  fullName:"Boogie Fland",      position:"G",  classYear:"So.", height:"6'3\"",  weight:"185" },
+  { id:"4684980", number:"1",  fullName:"Xaivian Lee",       position:"G",  classYear:"Sr.", height:"6'4\"",  weight:"180" },
+  { id:"4683741", number:"3",  fullName:"Micah Handlogten",  position:"C",  classYear:"Sr.", height:"7'1\"",  weight:"260" },
+  { id:"5112570", number:"4",  fullName:"Alex Lloyd",        position:"G",  classYear:"Fr.", height:"6'3\"",  weight:"180" },
+  { id:"5107057", number:"9",  fullName:"Rueben Chinyelu",   position:"C",  classYear:"Jr.", height:"6'10\"", weight:"265" },
+  { id:"5107071", number:"10", fullName:"Thomas Haugh",      position:"F",  classYear:"Jr.", height:"6'9\"",  weight:"215" },
+  { id:"5120826", number:"11", fullName:"CJ Ingram",         position:"G",  classYear:"Fr.", height:"6'6\"",  weight:"205" },
+  { id:"5113579", number:"12", fullName:"Viktor Mikic",      position:"C",  classYear:"So.", height:"6'11\"", weight:"260" },
+  { id:"5114450", number:"20", fullName:"Isaiah Brown",      position:"G",  classYear:"So.", height:"6'4\"",  weight:"210" },
+  { id:"5107073", number:"21", fullName:"Alex Condon",       position:"F/C",classYear:"Jr.", height:"6'11\"", weight:"236" },
+  { id:"5107207", number:"23", fullName:"AJ Brown",          position:"G",  classYear:"R-Jr.", height:"6'4\"", weight:"210" },
+  { id:"5107056", number:"32", fullName:"Olivier Rioux",     position:"C",  classYear:"R-Fr.", height:"7'9\"", weight:"305" }
 ];
 
 /* ========= DOM ========= */
@@ -45,7 +45,9 @@ const refreshBtn   = $("#refreshBtn");
 const genderSelect = $("#gender");
 const newsList     = $("#newsList");
 const ticketsList  = $("#ticketsList");
-const heroImg = $("#heroImg"); const prevBtn=$("#prevBtn"); const nextBtn=$("#nextBtn");
+const heroImg      = $("#heroImg");
+const prevBtn      = $("#prevBtn");
+const nextBtn      = $("#nextBtn");
 const propGameSelect   = $("#propGameSelect");
 const propPlayerSelect = $("#propPlayerSelect");
 const makePropsBtn     = $("#makePropsBtn");
@@ -89,7 +91,6 @@ document.addEventListener("click",(e)=>{
 let heroIndex=0;
 function setHero(i){
   const arr=CHAMPIONSHIP_PHOTOS;
-  if(!arr.length){ heroImg.src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg"; heroImg.style.objectFit="contain"; return; }
   heroIndex=(i+arr.length)%arr.length;
   const src=arr[heroIndex];
   heroImg.loading="lazy"; heroImg.decoding="async"; heroImg.referrerPolicy="no-referrer";
@@ -133,8 +134,11 @@ function parseRoster(data){
       if(nm==="stealsPerGame")stats.spg=val; if(nm==="blocksPerGame")stats.bpg=val; if(nm==="turnoversPerGame")stats.topg=val;
       if(nm==="minutesPerGame")stats.mpg=val;
     } }
-    players.push({ id:String(it.id), fullName:it.displayName, position:it.position?.abbreviation, number:it.jersey,
-      classYear:it.class, headshot:it.headshot?.href, stats, height:it.displayHeight, weight:it.displayWeight });
+    // strong headshot path (works even when ESPN omits headshot.href)
+    const pid = String(it.id||"");
+    const head = it.headshot?.href || (pid ? `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${pid}.png` : "");
+    players.push({ id:pid, fullName:it.displayName, position:it.position?.abbreviation, number:it.jersey,
+      classYear:it.class, headshot:head, stats, height:it.displayHeight, weight:it.displayWeight });
   } }
   players.sort((a,b)=> a.fullName.localeCompare(b.fullName));
   return players;
@@ -243,15 +247,15 @@ function renderSchedule(list){
     const card=el(`<div class="card">
       <div class="row">
         <div class="logo"></div>
-        <div style="flex:1">
+        <div style="flex:1;min-width:200px">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <div style="font-weight:800">${g.isHome?"vs":"@"} ${g.opponent}</div>${tv} ${venue}
+            <div style="font-weight:800;overflow-wrap:anywhere">${g.isHome?"vs":"@"} ${g.opponent}</div>${tv} ${venue}
           </div>
           <div class="meta">${fmtDate(g.date)}</div>${pred}
         </div>
         <div class="right">${right}</div>
       </div>
-      <div class="card-actions" style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end"></div>
+      <div class="card-actions" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"></div>
     </div>`);
     const logoNode = g.opponentLogo ? safeImg(g.opponentLogo.replace(/\.svg($|\?)/i,".png"), `${g.opponent} logo`) : safeImg("", "logo");
     logoNode.className="logo"; card.querySelector(".logo").replaceWith(logoNode);
@@ -267,17 +271,24 @@ function renderSchedule(list){
     scheduleList.appendChild(card);
   }
 }
+function rosterHeadshotUrl(p){
+  // ESPN reliable headshot CDN (men's); if not numeric id, return given headshot or fallback
+  if(p.headshot) return p.headshot;
+  const id = String(p.id||"");
+  return (/^\d+$/.test(id)) ? `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${id}.png` : "";
+}
 function renderRoster(players){
   rosterList.innerHTML="";
   if(!players.length){ rosterList.appendChild(el(`<div class="meta">No players found.</div>`)); return; }
   for(const p of players){
     const s=p.stats||{};
+    const imgSrc = rosterHeadshotUrl(p) || "https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg";
     const card=el(`
       <div class="card">
         <div class="row">
-          ${p.headshot?`<img class="logo" alt="" src="${p.headshot}" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg'">`:`<div class="logo"></div>`}
-          <div style="flex:1">
-            <div style="font-weight:800">${p.fullName}</div>
+          <img class="logo" alt="" src="${imgSrc}" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg'">
+          <div style="flex:1;min-width:220px">
+            <div style="font-weight:800;overflow-wrap:anywhere">${p.fullName}</div>
             <div class="meta">${p.number?("#"+p.number+" "):""}${p.position??""} ${p.classYear?("· "+p.classYear):""} ${p.height?("· "+p.height):""}${p.weight?(" / "+p.weight):""}</div>
             <div class="statgrid" style="margin-top:6px">
               <div class="stat"><div class="t">PPG</div><div class="v">${(s.ppg??0).toFixed(1)}</div></div>
@@ -308,8 +319,8 @@ function renderLeaders(players){
 function renderTeamPtsChart(games){
   const ctx=$("#teamPtsChart").getContext("2d");
   const completed=games.filter(g=>g.myScore!=null&&g.oppScore!=null);
-  if(!completed.length){ ctx.font="14px system-ui"; ctx.fillText("No completed games yet", 10, 20); return; }
-  new Chart(ctx,{ type:"line", data:{ labels:completed.map((g,i)=>`G${i+1}`), datasets:[{ label:"Gators Pts", data:completed.map(g=>g.myScore) }] }, options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }});
+  if(!completed.length){ ctx.font="14px system-ui"; ctx.fillText("No completed games yet", 10, 22); return; }
+  new Chart(ctx,{ type:"line", data:{ labels:completed.map((g,i)=>`G${i+1}`), datasets:[{ label:"Gators Pts", data:completed.map(g=>g.myScore) }]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }});
 }
 
 /* ===== Fun props helpers (fallback) ===== */
@@ -321,7 +332,7 @@ function overProb(value, mean, sd){ sd=Math.max(sd||0.01,0.01); const z=(value-m
 function makeLine(avg){ if(!avg||avg<=0) return 0.5; return Math.max(0.5, Math.round(avg/0.5)*0.5); }
 function defaultSd(avg){ return Math.max(0.6, avg*0.4); }
 
-/* ===== Leaderboard (Supabase) ===== */
+/* ===== Leaderboard ===== */
 function getUserId(){ let id=localStorage.getItem("gh_user_id"); if(!id){ id=crypto.randomUUID(); localStorage.setItem("gh_user_id",id);} return id; }
 async function upsertUserName(name){ const uid=getUserId(); localStorage.setItem("gh_name",name); await sb.from("users").upsert({ id: uid, name }, { onConflict: "id" }); }
 async function renderLeaderboard(){
@@ -345,7 +356,7 @@ async function renderLeaderboard(){
 if(lbSave){ lbSave.addEventListener("click", async ()=>{ const name=(lbName.value||"").trim().slice(0,40); if(!name) return alert("Enter a display name"); await upsertUserName(name); renderLeaderboard(); alert("Saved!"); }); }
 document.addEventListener("DOMContentLoaded", ()=>{ const pre=localStorage.getItem("gh_name"); if(pre&&lbName) lbName.value=pre; });
 
-/* ===== Odds mapping helpers ===== */
+/* ===== Odds mapping ===== */
 function dateOnlyUTC(iso){ const d=new Date(iso); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); }
 function daysApart(aIso, bIso){ const da=dateOnlyUTC(aIso), db=dateOnlyUTC(bIso); return Math.round(Math.abs(da-db)/86400000); }
 function mapOddsEventToSched(event, sched){
@@ -415,8 +426,8 @@ async function loadGameOdds(){
       const card=el(`
         <div class="card" style="cursor:pointer" title="Tap to view player props for this game">
           <div class="row">
-            <div style="flex:1">
-              <div style="font-weight:800">${match.isHome?"vs":"@"} ${match.opponent}</div>
+            <div style="flex:1;min-width:200px">
+              <div style="font-weight:800;overflow-wrap:anywhere">${match.isHome?"vs":"@"} ${match.opponent}</div>
               <div class="meta">${fmtDate(match.date)} · Source: ${book.title}</div>
             </div>
           </div>
@@ -463,7 +474,7 @@ async function loadPlayerProps(oddsEventId){
   }catch(e){ playerPropsDiv.innerHTML=`<div class='note'>Failed to load player props (${String(e)}).</div>`; }
 }
 
-/* ===== Props (use sportsbook lines when available) ===== */
+/* ===== Props (prefer sportsbook lines) ===== */
 function byOddsLine(fullName, bucketMap){
   if(!bucketMap) return null; const target=nrm(fullName);
   for(const [k,v] of bucketMap.entries()){ if(nrm(k)===target) return v; }
@@ -483,7 +494,7 @@ async function renderPropsCards(){
 
   selected.forEach(p=>{
     const avg=p.stats?.ppg||0;
-    const sportsbook= oddsLines ? byOddsLine(p.fullName, oddsLines.points) : null; // points lines
+    const sportsbook= oddsLines ? byOddsLine(p.fullName, oddsLines.points) : null;
     const line = (sportsbook!=null) ? sportsbook : makeLine(avg);
     const sd=defaultSd(avg);
     const pOver=Math.round(overProb(line, avg, sd)*100);
@@ -493,7 +504,7 @@ async function renderPropsCards(){
         <div class="prop-title">${p.fullName}</div>
         <div class="prop-meta">${sportsbook!=null?"Sportsbook line":"Model line"}: ${line.toFixed(1)} pts · Season ${(avg||0).toFixed(1)} PPG</div>
       </div>
-      <div style="display:flex;gap:12px;align-items:center">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <div class="toggle" data-player="${p.id}" data-line="${line}">
           <button data-type="under">Under ${line.toFixed(1)}</button>
           <button data-type="over" class="active">Over ${line.toFixed(1)}</button>
@@ -520,6 +531,44 @@ async function renderPropsCards(){
 }
 propGameSelect?.addEventListener("change", ()=>{ renderPropsCards(); });
 
+/* ===== News/Tickets list ===== */
+function renderNews(){
+  newsList.innerHTML="";
+  const links = [
+    ["Official Gators — Men’s Basketball","https://floridagators.com/sports/mens-basketball"],
+    ["ESPN — Florida Gators Team Page","https://www.espn.com/mens-college-basketball/team/_/id/57/florida-gators"],
+    ["The Independent Florida Alligator — Sports","https://www.alligator.org/section/sports"],
+    ["Google News — Gators Basketball","https://news.google.com/search?q=Florida%20Gators%20basketball&hl=en-US&gl=US&ceid=US%3Aen"]
+  ];
+  for(const [title,url] of links){ newsList.appendChild(el(`<a class="card" target="_blank" rel="noopener" href="${url}">${title}</a>`)); }
+}
+function renderTickets(games){
+  ticketsList.innerHTML="";
+  const upcoming=games.filter(g=> new Date(g.date) > new Date()).slice(0,5);
+  if(!upcoming.length){ ticketsList.appendChild(el(`<div class="card">No upcoming games found.</div>`)); return; }
+  for(const g of upcoming){
+    const t=ticketUrl(g.opponent, g.date);
+    const row=el(`<div class="card">
+      <div class="row">
+        <div class="logo"></div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-weight:800;overflow-wrap:anywhere">${g.isHome?"vs":"@"} ${g.opponent}</div>
+          <div class="meta">${fmtDate(g.date)} ${g.venue?("· "+g.venue):""}</div>
+        </div>
+        <div class="right">
+          <a class="btn" target="_blank" rel="noopener" href="${t.seatgeek}">SeatGeek</a>
+          <a class="btn" target="_blank" rel="noopener" href="${t.ticketmaster}">TM</a>
+          <a class="btn" target="_blank" rel="noopener" href="${t.vivid}">Vivid</a>
+          <a class="btn" target="_blank" rel="noopener" href="${t.google}">Google</a>
+        </div>
+      </div>
+    </div>`);
+    const logoNode = g.opponentLogo ? safeImg(g.opponentLogo.replace(/\.svg($|\?)/i,".png"), `${g.opponent} logo`) : safeImg("", "logo");
+    logoNode.className="logo"; row.querySelector(".logo").replaceWith(logoNode);
+    ticketsList.appendChild(row);
+  }
+}
+
 /* ===== Data flow ===== */
 async function loadAll(){
   try{
@@ -532,20 +581,19 @@ async function loadAll(){
     let rosterJSON, players=[];
     try{ rosterJSON = await getJSON(`${BASE}/${GENDER}/teams/${TEAM_ID}`); players = parseRoster(rosterJSON); }catch{}
     if(!players.length){
-      players = ROSTER_FALLBACK.map(p=>({ ...p, stats:{ppg:0,rpg:0,apg:0,fgp:0,tpp:0,ftp:0,spg:0,bpg:0,topg:0,mpg:0} }));
+      // fallback has numeric ids so headshots load
+      players = ROSTER_FALLBACK.map(p=>({ ...p, stats:{ppg:0,rpg:0,apg:0,fgp:0,tpp:0,ftp:0,spg:0,bpg:0,topg:0,mpg:0}, headshot:`https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${p.id}.png` }));
     }
     renderRoster(players);
 
     window._latestGames = games;
     window._rosterPlayers = players;
 
-    /* schedule extras */
     renderLeaders(players);
     renderTeamPtsChart(games);
     renderNews();
     renderTickets(games);
 
-    /* props + odds */
     populatePropControls();
     loadGameOdds();
     renderLeaderboard();
@@ -580,44 +628,6 @@ function populatePropControls(){
     propPlayerSelect.appendChild(o);
   }
   [...propPlayerSelect.options].slice(0,5).forEach(x=>x.selected=true);
-}
-
-/* News/Tickets simple links */
-function renderNews(){
-  newsList.innerHTML="";
-  const links = [
-    ["Official Gators — Men’s Basketball","https://floridagators.com/sports/mens-basketball"],
-    ["ESPN — Florida Gators Team Page","https://www.espn.com/mens-college-basketball/team/_/id/57/florida-gators"],
-    ["The Independent Florida Alligator — Sports","https://www.alligator.org/section/sports"],
-    ["Google News — Gators Basketball","https://news.google.com/search?q=Florida%20Gators%20basketball&hl=en-US&gl=US&ceid=US%3Aen"]
-  ];
-  for(const [title,url] of links){ newsList.appendChild(el(`<a class="card" target="_blank" rel="noopener" href="${url}">${title}</a>`)); }
-}
-function renderTickets(games){
-  ticketsList.innerHTML="";
-  const upcoming=games.filter(g=> new Date(g.date) > new Date()).slice(0,5);
-  if(!upcoming.length){ ticketsList.appendChild(el(`<div class="card">No upcoming games found.</div>`)); return; }
-  for(const g of upcoming){
-    const t=ticketUrl(g.opponent, g.date);
-    const row=el(`<div class="card">
-      <div class="row">
-        <div class="logo"></div>
-        <div style="flex:1">
-          <div style="font-weight:800">${g.isHome?"vs":"@"} ${g.opponent}</div>
-          <div class="meta">${fmtDate(g.date)} ${g.venue?("· "+g.venue):""}</div>
-        </div>
-        <div class="right">
-          <a class="btn" target="_blank" rel="noopener" href="${t.seatgeek}">SeatGeek</a>
-          <a class="btn" target="_blank" rel="noopener" href="${t.ticketmaster}">TM</a>
-          <a class="btn" target="_blank" rel="noopener" href="${t.vivid}">Vivid</a>
-          <a class="btn" target="_blank" rel="noopener" href="${t.google}">Google</a>
-        </div>
-      </div>
-    </div>`);
-    const logoNode = g.opponentLogo ? safeImg(g.opponentLogo.replace(/\.svg($|\?)/i,".png"), `${g.opponent} logo`) : safeImg("", "logo");
-    logoNode.className="logo"; row.querySelector(".logo").replaceWith(logoNode);
-    ticketsList.appendChild(row);
-  }
 }
 
 /* ========= Init ========= */
