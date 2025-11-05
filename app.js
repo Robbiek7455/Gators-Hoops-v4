@@ -1,4 +1,33 @@
-/* ========= Config ========= */
+/* ---------- Name & date matching helpers ---------- */
+function nrm(n){ return String(n||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim(); }
+const GATORS = "florida gators";
+
+function dateOnlyUTC(iso){ const d=new Date(iso); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); }
+function daysApart(aIso, bIso){
+  const da = dateOnlyUTC(aIso), db = dateOnlyUTC(bIso);
+  return Math.round(Math.abs(da - db) / 86400000);
+}
+
+/* Map an Odds API event to a schedule game by opponent name + within 3 days */
+function mapOddsEventToSched(event, sched) {
+  const home = nrm(event.home_team), away = nrm(event.away_team);
+  const eventTeams = [home, away];
+  if (!eventTeams.includes(GATORS)) return null;           // ignore games without Florida
+
+  // Find the schedule game with same opponent and nearby date
+  const opp = home === GATORS ? away : home;
+  let best = null, bestGap = 99;
+  for (const g of sched) {
+    const gOpp = nrm(g.opponent);
+    if (gOpp !== opp) continue;
+    const gap = daysApart(g.date, event.commence_time || g.date);
+    if (gap < bestGap) { best = g; bestGap = gap; }
+  }
+  return best && bestGap <= 3 ? { match: best, isHome: (home !== GATORS) } : null;
+}
+
+/* Cache for player lines by Odds event id */
+window._oddsPlayerCache = {};   // { [eventId]: { points: Map(name->line), rebounds:..., assists:... } }/* ========= Config ========= */
 const TEAM_ID = 57;
 let   GENDER  = "mens-college-basketball";
 const BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball";
