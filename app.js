@@ -21,6 +21,20 @@ const CHAMPIONSHIP_PHOTOS = [
 ];
 
 /* ---- Roster fallback ---- */
+/* UF official headshots (Sidearm). Add more as needed. */
+const UF_HEADSHOTS = {
+  "Alex Condon": "https://images.sidearmdev.com/resize?height=300&type=webp&url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fgatorzone.com%2Fimages%2F2025%2F9%2F12%2FCONDON_ALEX_FLORIDA_21_M1NWw.jpg",
+  // Add more known ones the same way, e.g.:
+  // "Boogie Fland": "<UF headshot url>",
+  // "Thomas Haugh": "<UF headshot url>",
+  // ...
+};
+/* Link to official UF profile (so users can tap through to verify) */
+function ufProfileUrl(fullName){
+  // simple slug builder: "First Last" -> "first-last"
+  const slug = String(fullName||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  return `https://floridagators.com/sports/mens-basketball/roster/${slug}`;
+}
 const ROSTER_FALLBACK = [
   { id:"4576218", number:"0",  fullName:"Boogie Fland",      position:"G",  classYear:"So.", height:"6'3\"",  weight:"185" },
   { id:"4684980", number:"1",  fullName:"Xaivian Lee",       position:"G",  classYear:"Sr.", height:"6'4\"",  weight:"180" },
@@ -272,10 +286,13 @@ function renderSchedule(list){
   }
 }
 function rosterHeadshotUrl(p){
-  // ESPN reliable headshot CDN (men's); if not numeric id, return given headshot or fallback
-  if(p.headshot) return p.headshot;
+  // Priority: UF official > ESPN headshot > UF logo fallback
+  if (UF_HEADSHOTS[p.fullName]) return UF_HEADSHOTS[p.fullName];
+  if (p.headshot) return p.headshot;
   const id = String(p.id||"");
-  return (/^\d+$/.test(id)) ? `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${id}.png` : "";
+  if (/^\d+$/.test(id)) return `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${id}.png`;
+  return "https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg";
+}
 }
 function renderRoster(players){
   rosterList.innerHTML="";
@@ -288,7 +305,9 @@ function renderRoster(players){
         <div class="row">
           <img class="logo" alt="" src="${imgSrc}" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg'">
           <div style="flex:1;min-width:220px">
-            <div style="font-weight:800;overflow-wrap:anywhere">${p.fullName}</div>
+            <div style="font-weight:800;overflow-wrap:anywhere">
+  <a href="${ufProfileUrl(p.fullName)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${p.fullName}</a>
+</div>
             <div class="meta">${p.number?("#"+p.number+" "):""}${p.position??""} ${p.classYear?("· "+p.classYear):""} ${p.height?("· "+p.height):""}${p.weight?(" / "+p.weight):""}</div>
             <div class="statgrid" style="margin-top:6px">
               <div class="stat"><div class="t">PPG</div><div class="v">${(s.ppg??0).toFixed(1)}</div></div>
@@ -323,10 +342,87 @@ function renderTeamPtsChart(games){
   new Chart(ctx,{ type:"line", data:{ labels:completed.map((g,i)=>`G${i+1}`), datasets:[{ label:"Gators Pts", data:completed.map(g=>g.myScore) }]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } }});
 }
 
-/* ===== Fun props helpers (fallback) ===== */
+/* ===== Props system (book lines first, then smart fallback, plus optional overrides) ===== */
+
+// --- math helpers for fallback lines ---
 function normCdf(x){ const t=1/(1+0.2316419*Math.abs(x)), d=0.3989423*Math.exp(-x*x/2);
   let p=1-d*(1.330274429*t - 1.821255978*t*t + 1.781477937*t**3 - 0.356563782*t**4 + 0.319381530*t**5);
   return x<0?1-p:p;
+}
+function overProb(value, mean, sd){ sd=Math.max(sd||0.01,0.01); const z=(value-mean)/sd; return 1-normCdf(z); }
+
+// Build a line from recent form + season mean (no more 0.5 default).
+function buildSmartLine(stats){
+  // Expect: { seasonAvg, recentAvg } in points; fallbacks safe
+  const season = Number(stats?.seasonAvg||0);
+  const recent = Number(stats?.recentAvg||0);
+  const base = recent > 0 ? (0.65*recent + 0.35*season) : season;
+  // round to 0.5 steps, clamp to sensible min
+  const raw  = Math.max(1.5, base);
+  return Math.round(raw*2)/2; // 0.5 granularity
+}
+
+// Estimate variance for probability display
+function estimateSd(avg){ return Math.max(0.7, avg*0.45); }
+
+// Try to pull sportsbook player lines from Netlify odds fn (if available)
+async function fetchSportsbookPlayerLines(oddsEventId){
+  const out={ points:new Map(), rebounds:new Map(), assists:new Map() };
+  try{
+    const r = await fetch(`${NETLIFY_ODDS_FN}?type=player&eventId=${encodeURIComponent(oddsEventId)}&region=us&_=${Date.now()}`);
+    if(!r.ok) return out;
+    const data = await r.json();
+    const book = (data.bookmakers||[])[0]; if(!book) return out;
+    for(const mkt of (book.markets||[])){
+      const key=mkt.key||"";
+      const bucket = key.includes("points") ? out.points
+                   : key.includes("rebounds") ? out.rebounds
+                   : key.includes("assists")  ? out.assists
+                   : null;
+      if(!bucket) continue;
+      for(const o of (mkt.outcomes||[])){
+        const name=(o.description||o.participant||o.player||o.team||o.name||"").trim();
+        const line=(o.point!=null)?Number(o.point):null;
+        if(name && line!=null) bucket.set(name, line);
+      }
+    }
+  }catch{ /* ignore */ }
+  return out;
+}
+
+// Optional: read manual overrides from Supabase (so you can paste tonight’s props)
+async function fetchOverrides(eventId){
+  try{
+    const { data, error } = await sb
+      .from("props_overrides")
+      .select("player_name,stat,line")
+      .eq("event_id", eventId);
+    if(error || !data) return [];
+    return data; // [{player_name, stat:'points'|'rebounds'|'assists', line:Number}]
+  }catch{ return []; }
+}
+
+// Helper: pick line priority => overrides > sportsbook > smart fallback
+function chooseLine(playerName, stat, sportsbookBuckets, overrides, smartLine){
+  const key = (s)=>String(s||"").trim().toLowerCase();
+  const ovr = overrides.find(o => key(o.player_name)===key(playerName) && key(o.stat)===key(stat));
+  if(ovr?.line!=null) return { line:Number(ovr.line), source:"Override" };
+  const bucket = stat==="points" ? sportsbookBuckets?.points
+               : stat==="rebounds" ? sportsbookBuckets?.rebounds
+               : stat==="assists"  ? sportsbookBuckets?.assists
+               : null;
+  if(bucket){
+    for(const [n,v] of bucket.entries()){
+      if(key(n)===key(playerName)) return { line:Number(v), source:"Sportsbook" };
+    }
+    // soft match
+    for(const [n,v] of bucket.entries()){
+      const nn=key(n), pp=key(playerName);
+      if(nn.includes(pp)||pp.includes(nn)) return { line:Number(v), source:"Sportsbook" };
+    }
+  }
+  return { line: smartLine, source:"Model" };
+}
 }
 function overProb(value, mean, sd){ sd=Math.max(sd||0.01,0.01); const z=(value-mean)/sd; return 1-normCdf(z); }
 function makeLine(avg){ if(!avg||avg<=0) return 0.5; return Math.max(0.5, Math.round(avg/0.5)*0.5); }
@@ -374,37 +470,66 @@ function mapOddsEventToSched(event, sched){
 window._oddsPlayerCache = {};
 
 /* Pull player props and cache per event */
-async function cachePlayerOddsLines(oddsEventId){
-  if(window._oddsPlayerCache[oddsEventId]) return window._oddsPlayerCache[oddsEventId];
-  const out={ points:new Map(), rebounds:new Map(), assists:new Map() };
-  try{
-    const res=await fetch(`${NETLIFY_ODDS_FN}?type=player&eventId=${encodeURIComponent(oddsEventId)}&region=us&_=${Date.now()}`);
-    if(!res.ok) return out;
-    const data=await res.json(); const book=(data.bookmakers||[])[0]; if(!book) return out;
-    for(const mkt of (book.markets||[])){
-      const key=mkt.key;
-      const bucket= key.includes("points")?out.points : key.includes("rebounds")?out.rebounds : key.includes("assists")?out.assists : null;
-      if(!bucket) continue;
-      for(const o of (mkt.outcomes||[])){
-        const name=(o.description||o.participant||o.player||o.team||o.name||"").trim();
-        const line=(o.point!=null)?Number(o.point):null;
-        if(!name || line==null) continue;
-        if(!bucket.has(name)) bucket.set(name,line);
-      }
-    }
-  }catch{}
-  window._oddsPlayerCache[oddsEventId]=out;
-  return out;
-}
-async function findOddsEventIdForEspnEvent(espnEventId){
-  try{
-    const res=await fetch(`${NETLIFY_ODDS_FN}?type=game&region=us&_=${Date.now()}`);
-    if(!res.ok) return null;
-    const odds=await res.json(); const sched=window._latestGames||[]; const target=sched.find(g=>g.id===espnEventId);
-    if(!target) return null;
-    for(const ev of odds){ if(mapOddsEventToSched(ev,[target])) return ev.id; }
-    return null;
-  }catch{ return null; }
+async function renderPropsCards(){
+  const playersAll = window._rosterPlayers||[];
+  const selectedEventId = propGameSelect.value;
+
+  // Try to map ESPN event -> odds event id (for sportsbook pull)
+  const oddsEventId = await findOddsEventIdForEspnEvent(selectedEventId);
+  const sportsbook = oddsEventId ? await fetchSportsbookPlayerLines(oddsEventId) : null;
+  const overrides  = await fetchOverrides(selectedEventId);
+
+  // Which players did user pick?
+  const ids=[...propPlayerSelect.selectedOptions].map(o=>o.value);
+  const selected = playersAll.filter(p=>ids.includes(p.id));
+  propsWrap.innerHTML="";
+  if(!selected.length){
+    propsWrap.innerHTML=`<div class="note">Pick at least one player, then tap Generate.</div>`;
+    return;
+  }
+
+  selected.forEach(p=>{
+    // Build smart line from season + “recent” (here we estimate recent using season if no game log available)
+    const seasonAvg = Number(p.stats?.ppg||0);
+    const recentAvg = Number(p.stats?.recentPpg||p.stats?.ppg||0);
+    const smart = buildSmartLine({ seasonAvg, recentAvg });
+
+    // Priority: overrides > sportsbook > smart
+    const chosen = chooseLine(p.fullName, "points", sportsbook, overrides, smart);
+    const sd     = estimateSd(seasonAvg||smart);
+    const probO  = Math.round(overProb(chosen.line, seasonAvg||smart, sd)*100);
+
+    const div=el(`<div class="prop-card">
+      <div>
+        <div class="prop-title">${p.fullName}</div>
+        <div class="prop-meta">${chosen.source} line: ${chosen.line.toFixed(1)} pts · Season ${(seasonAvg||0).toFixed(1)} PPG</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div class="toggle" data-player="${p.id}" data-line="${chosen.line}">
+          <button data-type="under">Under ${chosen.line.toFixed(1)}</button>
+          <button data-type="over" class="active">Over ${chosen.line.toFixed(1)}</button>
+        </div>
+        <div class="prop-meta">Over: <b id="prob-${p.id}">${probO}%</b></div>
+      </div>
+    </div>`);
+
+    // Save to leaderboard on pick
+    div.querySelector(".toggle").addEventListener("click", async (e)=>{
+      const btn=e.target.closest("button"); if(!btn) return;
+      div.querySelectorAll(".toggle button").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const prob = btn.dataset.type==="over" ? probO : (100-probO);
+      div.querySelector(`#prob-${p.id}`).textContent=`${prob}%`;
+      try{
+        const uid=getUserId();
+        const name=localStorage.getItem("gh_name")||`Fan-${uid.slice(0,6)}`;
+        await upsertUserName(name);
+        await sb.from("prop_picks").insert({ user_id:uid, event_id:selectedEventId, player_id:p.id, line:Number(chosen.line), choice:btn.dataset.type });
+      }catch{}
+    });
+
+    propsWrap.appendChild(div);
+  });
 }
 
 /* ===== Odds UI ===== */
