@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=40"/>
+  <link rel="stylesheet" href="style.css?v=60"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <a href="#main" class="skip">Skip to content</a>
@@ -18,7 +19,8 @@
         <h1>Gator Hoops</h1>
       </div>
       <div class="controls">
-        <button id="refreshBtn" type="button" class="btn small" title="Refresh">↻ Refresh</button>
+        <input id="usernameInput" class="input" placeholder="Display name for picks" />
+        <button id="refreshBtn" type="button" class="btn small" title="Refresh">↻</button>
         <button id="themeBtn" type="button" class="btn small" title="Toggle theme">☾</button>
       </div>
     </div>
@@ -30,7 +32,6 @@
     <img alt="NCAA" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/4/43/NCAA_logo.svg">
   </div>
 
-  <!-- Hero: kept visually below the sticky header & above tabs, but does NOT capture clicks outside its area -->
   <section class="hero" aria-label="Highlights">
     <div class="carousel">
       <img id="heroImg" alt="Florida Gators Highlights"/>
@@ -48,7 +49,6 @@
     </div>
   </section>
 
-  <!-- Tabs -->
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" class="tab" id="tab-schedule" role="tab" aria-controls="panel-schedule" aria-selected="true">Schedule</button>
     <button type="button" class="tab" id="tab-roster"   role="tab" aria-controls="panel-roster"   aria-selected="false">Roster</button>
@@ -70,9 +70,9 @@
       </div>
     </section>
 
-    <!-- Roster (UF official) -->
+    <!-- Roster -->
     <section id="panel-roster" class="section" role="tabpanel" aria-labelledby="tab-roster">
-      <div class="note">Roster uses UF official headshots (no ESPN dependency).</div>
+      <div class="note">2025–26 roster with reliable headshots. If any image fails, it auto-falls back.</div>
       <div id="rosterList" class="grid">
         <div class="skeleton card"></div>
         <div class="skeleton card"></div>
@@ -82,19 +82,29 @@
 
     <!-- Props -->
     <section id="panel-props" class="section" role="tabpanel" aria-labelledby="tab-props">
-      <div class="card" style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <strong>Player Props (for fun)</strong>
-          <span class="note">Uses averages from the last 6 completed games; if none, season average.</span>
-        </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
         <div class="row">
-          <label style="flex:1;min-width:240px">Players:
-            <select id="propPlayerSelect" multiple size="8" style="min-width:260px"></select>
+          <strong>Player Props (for fun)</strong>
+          <span class="note">Lines = last 6 games avg (fallback: season/role). Pick Over/Under and save.</span>
+        </div>
+
+        <div class="row" style="align-items:flex-start">
+          <label style="min-width:240px;flex:1">Players:
+            <select id="propPlayerSelect" multiple size="10" style="min-width:260px"></select>
           </label>
-          <button id="makePropsBtn" class="btn primary" type="button">Generate</button>
+          <div class="col">
+            <button id="genPropsBtn" class="btn primary" type="button">Generate Lines</button>
+            <button id="savePicksBtn" class="btn" type="button">Save My Picks</button>
+          </div>
         </div>
       </div>
+
       <div id="propsList" class="grid" style="margin-top:10px"></div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Leaderboard (for fun)</h3>
+        <div id="lbWrap" class="grid"></div>
+      </div>
     </section>
 
     <!-- Stats -->
@@ -106,7 +116,7 @@
         </div>
         <div class="card" style="min-height:300px">
           <h3 style="margin:0 0 10px 0">Team Points by Game</h3>
-          <canvas id="teamPtsChart" height="260" aria-label="Line chart of team points by game"></canvas>
+          <canvas id="teamPtsChart" height="260"></canvas>
         </div>
       </div>
     </section>
@@ -131,7 +141,6 @@
   </main>
 
   <div id="toast" role="status" aria-live="polite"></div>
-
-  <script src="app.js?v=40"></script>
+  <script src="app.js?v=60"></script>
 </body>
 </html>
