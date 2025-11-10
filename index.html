@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=21"/>
+  <link rel="stylesheet" href="style.css?v=30"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="topbar">
@@ -17,11 +16,6 @@
         <h1>Gator Hoops</h1>
       </div>
       <div class="controls">
-        <label class="meta">Team</label>
-        <select id="gender" aria-label="Team selector">
-          <option value="mens-college-basketball" selected>Men's</option>
-          <option value="womens-college-basketball">Women's</option>
-        </select>
         <button id="refreshBtn" type="button" title="Refresh">↻ Refresh</button>
       </div>
     </div>
@@ -67,8 +61,9 @@
       <div id="scheduleList" class="grid"></div>
     </section>
 
-    <!-- Roster -->
+    <!-- Roster (UF official) -->
     <section id="panel-roster" class="section" role="tabpanel" aria-labelledby="tab-roster">
+      <div class="note">Roster powered by the official UF headshots. No ESPN dependency.</div>
       <div id="rosterList" class="grid"></div>
     </section>
 
@@ -77,19 +72,15 @@
       <div class="card" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <strong>Player Props (for fun)</strong>
-          <span class="note">Uses averages from the last 6 completed games (auto).</span>
+          <span class="note">Uses averages from the last 6 completed games (auto). If none, season average.</span>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <label>Game:
-            <select id="propGameSelect"></select>
-          </label>
           <label>Players:
             <select id="propPlayerSelect" multiple size="6" style="min-width:240px"></select>
           </label>
           <button id="makePropsBtn" class="btn primary" type="button">Generate</button>
         </div>
       </div>
-
       <div id="propsList" class="grid" style="margin-top:10px"></div>
     </section>
 
@@ -127,9 +118,9 @@
   </main>
 
   <footer>
-    <small>Not affiliated with UF. Data from ESPN public JSON. Odds & props are for entertainment only.</small>
+    <small>Not affiliated with UF. Roster photos from UF’s official site (Sidearm). Team stats & scores from ESPN public JSON. Odds & props are for entertainment only.</small>
   </footer>
 
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=30"></script>
 </body>
 </html>
