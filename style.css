@@ -19,10 +19,7 @@
 
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{
-  font-family:system-ui,-apple-system,Inter,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg); color:var(--ink); -webkit-text-size-adjust:100%;
-}
+body{font-family:system-ui,-apple-system,Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%}
 .skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip:focus{left:8px;top:8px;width:auto;height:auto;padding:8px;background:#fff;border-radius:8px;z-index:1000}
 
@@ -32,7 +29,8 @@ body{
 .brandmark{height:26px;flex:0 0 auto}
 .brand h1{margin:0;font-size:18px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-button,select{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;outline:none;cursor:pointer}
+button,select,input{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;outline:none;cursor:pointer}
+input.input{min-width:200px}
 button:active{transform:translateY(1px)}
 .btn.small{padding:6px 9px;font-size:13px}
 .btn.primary{background:var(--uf-orange);color:#fff;border:0}
@@ -62,6 +60,7 @@ main{padding:14px;max-width:980px;margin:0 auto}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 1px 2px rgba(20,23,28,.05)}
 .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:10px}
 .logo{width:56px;height:56px;border-radius:10px;background:#eef2f7;object-fit:cover;flex:0 0 56px}
 .meta{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
 .right{margin-left:auto;text-align:right}
@@ -81,6 +80,17 @@ main{padding:14px;max-width:980px;margin:0 auto}
 .skeleton{opacity:.6;min-height:76px;background:linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.11), rgba(0,0,0,0.06));
   background-size:200% 100%;animation:s 1.2s linear infinite}
 @keyframes s {0%{background-position:0 0}100%{background-position:-200% 0}}
+
+.prop-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prop-line{font-weight:700}
+.prop-choices{display:flex;gap:8px}
+.prop-choices label{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);cursor:pointer}
+.prop-choices input{accent-color:var(--uf-orange)}
+.prop-save{margin-left:auto}
+
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th,.lb-table td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+.lb-table th{font-weight:700}
 
 #toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s;z-index:120}
 #toast.show{opacity:1}
