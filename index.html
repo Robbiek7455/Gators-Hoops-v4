@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=20"/>
+  <link rel="stylesheet" href="style.css?v=21"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -77,7 +77,7 @@
       <div class="card" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <strong>Player Props (for fun)</strong>
-          <span class="note">Pick a game & players, then generate lines.</span>
+          <span class="note">Uses averages from the last 6 completed games (auto).</span>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <label>Game:
@@ -91,27 +91,6 @@
       </div>
 
       <div id="propsList" class="grid" style="margin-top:10px"></div>
-
-      <div class="card" style="margin-top:12px">
-        <h3 style="margin:0 0 8px 0">Live Game Lines (US)</h3>
-        <div id="gameOdds" class="grid"></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h3 style="margin:0 0 8px 0">Player Props (US)</h3>
-        <div class="note">Tap a game card above to load available player props.</div>
-        <div id="playerProps" class="grid"></div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h3 style="margin:0 0 8px 0">Props Leaderboard (for fun)</h3>
-        <div class="note">Enter a display name to compete. No money; entertainment only.</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0">
-          <input id="lbName" placeholder="Your display name" style="padding:8px 10px;border-radius:10px;border:1px solid #e5e7eb" />
-          <button id="lbSave" class="btn" type="button">Save Name</button>
-        </div>
-        <div id="leaderboard" class="grid"></div>
-      </div>
     </section>
 
     <!-- Stats -->
@@ -151,7 +130,6 @@
     <small>Not affiliated with UF. Data from ESPN public JSON. Odds & props are for entertainment only.</small>
   </footer>
 
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=21"></script>
 </body>
 </html>
-
