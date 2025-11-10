@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=60"/>
+  <link rel="manifest" href="manifest.webmanifest?v=75">
+  <link rel="stylesheet" href="style.css?v=75"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -20,6 +21,7 @@
       </div>
       <div class="controls">
         <input id="usernameInput" class="input" placeholder="Display name for picks" />
+        <button id="installBtn" type="button" class="btn small" title="Install app">＋ Install</button>
         <button id="refreshBtn" type="button" class="btn small" title="Refresh">↻</button>
         <button id="themeBtn" type="button" class="btn small" title="Toggle theme">☾</button>
       </div>
@@ -63,21 +65,18 @@
     <section id="panel-schedule" class="section active" role="tabpanel" aria-labelledby="tab-schedule">
       <button id="addAllBtn" class="allcal-btn" type="button">Add All Games to Calendar</button>
       <div id="nextGame" class="next-wrap"></div>
-      <div id="scheduleList" class="grid">
-        <div class="skeleton card"></div>
-        <div class="skeleton card"></div>
-        <div class="skeleton card"></div>
+      <div id="scheduleList" class="grid"></div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Wallpapers</h3>
+        <div class="grid" id="wallpapers"></div>
       </div>
     </section>
 
     <!-- Roster -->
     <section id="panel-roster" class="section" role="tabpanel" aria-labelledby="tab-roster">
-      <div class="note">2025–26 roster with reliable headshots. If any image fails, it auto-falls back.</div>
-      <div id="rosterList" class="grid">
-        <div class="skeleton card"></div>
-        <div class="skeleton card"></div>
-        <div class="skeleton card"></div>
-      </div>
+      <div class="note">2025–26 roster. If any headshot fails, it auto-falls back to the UF logo.</div>
+      <div id="rosterList" class="grid"></div>
     </section>
 
     <!-- Props -->
@@ -85,9 +84,8 @@
       <div class="card" style="display:flex;flex-direction:column;gap:12px">
         <div class="row">
           <strong>Player Props (for fun)</strong>
-          <span class="note">Lines = last 6 games avg (fallback: season/role). Pick Over/Under and save.</span>
+          <span class="note">Lines = this season’s per-player average (computed from completed games only). Pick Over/Under and save.</span>
         </div>
-
         <div class="row" style="align-items:flex-start">
           <label style="min-width:240px;flex:1">Players:
             <select id="propPlayerSelect" multiple size="10" style="min-width:260px"></select>
@@ -111,12 +109,16 @@
     <section id="panel-stats" class="section" role="tabpanel" aria-labelledby="tab-stats">
       <div class="grid">
         <div class="card">
-          <h3 style="margin:0 0 10px 0">Leaders</h3>
+          <h3 style="margin:0 0 10px 0">Leaders (this season)</h3>
           <div id="leaders" class="statgrid"></div>
         </div>
         <div class="card" style="min-height:300px">
           <h3 style="margin:0 0 10px 0">Team Points by Game</h3>
           <canvas id="teamPtsChart" height="260"></canvas>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 10px 0">Advanced Team Numbers</h3>
+          <div id="advStats" class="grid"></div>
         </div>
       </div>
     </section>
@@ -141,6 +143,6 @@
   </main>
 
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=60"></script>
+  <script src="app.js?v=75"></script>
 </body>
 </html>
