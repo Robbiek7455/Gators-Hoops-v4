@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=14"/>
+  <link rel="stylesheet" href="style.css?v=20"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -28,15 +28,9 @@
   </header>
 
   <div class="brands">
-    <img alt="UF" loading="lazy"
-         src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg"
-         onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/9/9d/NCAA_logo.svg'">
-    <img alt="SEC" loading="lazy"
-         src="https://upload.wikimedia.org/wikipedia/commons/6/65/Southeastern_Conference_logo.svg"
-         onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/9/9d/NCAA_logo.svg'">
-    <img alt="NCAA" loading="lazy"
-         src="https://upload.wikimedia.org/wikipedia/commons/4/43/NCAA_logo.svg"
-         onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/9/9d/NCAA_logo.svg'">
+    <img alt="UF" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg">
+    <img alt="SEC" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/6/65/Southeastern_Conference_logo.svg">
+    <img alt="NCAA" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/4/43/NCAA_logo.svg">
   </div>
 
   <section class="hero" aria-label="Highlights">
@@ -90,7 +84,7 @@
             <select id="propGameSelect"></select>
           </label>
           <label>Players:
-            <select id="propPlayerSelect" multiple size="5" style="min-width:220px"></select>
+            <select id="propPlayerSelect" multiple size="6" style="min-width:240px"></select>
           </label>
           <button id="makePropsBtn" class="btn primary" type="button">Generate</button>
         </div>
@@ -127,9 +121,9 @@
           <h3 style="margin:0 0 10px 0">Leaders</h3>
           <div id="leaders" class="statgrid"></div>
         </div>
-        <div class="card">
+        <div class="card" style="min-height:300px">
           <h3 style="margin:0 0 10px 0">Team Points by Game</h3>
-          <canvas id="teamPtsChart" height="240"></canvas>
+          <canvas id="teamPtsChart" height="260"></canvas>
         </div>
       </div>
     </section>
@@ -154,9 +148,10 @@
   </main>
 
   <footer>
-    <small>Not affiliated with UF. Data from public ESPN JSON. Odds & props are for entertainment only.</small>
+    <small>Not affiliated with UF. Data from ESPN public JSON. Odds & props are for entertainment only.</small>
   </footer>
 
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>
+
