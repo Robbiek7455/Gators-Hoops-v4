@@ -1,7 +1,7 @@
 /* ========= Config ========= */
 const TEAM_ID = 57; // Florida men
-const ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball";
-const ESPN_WEB = "https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/summary?event=";
+const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball";
+const ESPN_WEB  = "https://site.web.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/summary?event=";
 
 /* ========= Supabase (Leaderboard) ========= */
 const SUPABASE_URL  = "https://rydpaqzentkqlwjgxpbt.supabase.co";
@@ -25,6 +25,7 @@ const savePicksBtn     = $("#savePicksBtn");
 const themeBtn         = $("#themeBtn");
 const toastEl          = $("#toast");
 const usernameInput    = $("#usernameInput");
+const installBtn       = $("#installBtn");
 
 /* ========= Helpers ========= */
 function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
@@ -32,7 +33,7 @@ async function getJSON(url){ const r=await fetch(url,{cache:"no-store"}); if(!r.
 function fmtDate(iso){ const d=new Date(iso); return d.toLocaleString(undefined,{dateStyle:"medium", timeStyle:"short"}); }
 function toGCalDate(dt){ return dt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z"); }
 function addHours(date, h){ const d=new Date(date); d.setHours(d.getHours()+h); return d; }
-function toast(msg){ if(!toastEl) return; toastEl.textContent=msg; toastEl.classList.add("show"); setTimeout(()=>toastEl.classList.remove("show"), 2000); }
+function toast(msg){ if(!toastEl) return; toastEl.textContent=msg; toastEl.classList.add("show"); setTimeout(()=>toastEl.classList.remove("show"), 2200); }
 function imgFallback(img){ img.onerror=()=>{ img.onerror=null; img.src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg"; img.style.objectFit="contain"; }; }
 
 /* ========= Theme & username ========= */
@@ -49,6 +50,15 @@ function imgFallback(img){ img.onerror=()=>{ img.onerror=null; img.src="https://
     usernameInput.addEventListener("change", ()=> localStorage.setItem("gh_username", usernameInput.value.trim()));
   }catch{}
 })();
+
+/* ========= PWA install + SW ========= */
+let deferredPrompt=null;
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js?v=75").catch(()=>{}); }
+window.addEventListener("beforeinstallprompt",(e)=>{ e.preventDefault(); deferredPrompt=e; installBtn?.classList.remove("hidden"); });
+installBtn?.addEventListener("click", async ()=>{
+  if(!deferredPrompt){ toast("Already installed or not eligible"); return; }
+  deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.classList.add("hidden");
+});
 
 /* ========= Hero ========= */
 const CHAMPIONSHIP_PHOTOS = [
@@ -77,14 +87,10 @@ function activateTab(which){
 }
 document.addEventListener("click",(e)=>{
   const t=e.target.closest(".tab"); if(!t) return;
-  e.preventDefault();
-  activateTab(t.id.replace("tab-",""));
+  e.preventDefault(); activateTab(t.id.replace("tab-",""));
 });
 
-/* ========= ROSTER 2025–26 (UF official list, ESPN headshots) =========
-   Source: floridagators.com roster page (2025–26).
-   Headshots: ESPN player images for reliability.
-*/
+/* ========= ROSTER 2025–26 ========= */
 const UF_ROSTER = [
   { id:"fland",        fullName:"Boogie Fland",      number:"0",  position:"G",   classYear:"So.", headshot:"https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5238195.png" },
   { id:"lee",          fullName:"Xaivian Lee",       number:"1",  position:"G",   classYear:"Sr.", headshot:"https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5107169.png" },
@@ -122,7 +128,7 @@ function parseSchedule(data){
   }).sort((a,b)=> new Date(a.date)-new Date(b.date));
 }
 
-/* ========= Renderers ========= */
+/* ========= Render schedule + tickets + ICS + wallpapers + highlights ========= */
 function ticketUrl(opponent, iso){
   const d=new Date(iso); const yyyy=d.getUTCFullYear(), mm=String(d.getUTCMonth()+1).padStart(2,'0'), dd=String(d.getUTCDate()).padStart(2,'0');
   const dateStr=`${yyyy}-${mm}-${dd}`, teams=`Florida Gators vs ${opponent}`, q=`${teams} ${dateStr} Gainesville`;
@@ -131,6 +137,10 @@ function ticketUrl(opponent, iso){
     ticketmaster:`https://www.ticketmaster.com/search?q=${encodeURIComponent(q)}`,
     vivid:`https://www.vividseats.com/search?search=${encodeURIComponent(q)}`
   };
+}
+function ytSearchUrl(opponent, iso){ // quick link to highlights
+  const q=`Florida Gators ${opponent} basketball highlights ${new Date(iso).getFullYear()}`;
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 }
 function renderSchedule(list){
   scheduleList.innerHTML=""; window._latestGames=list;
@@ -142,6 +152,7 @@ function renderSchedule(list){
       <div class="next-left">
         <div style="font-weight:800">Next: ${next.isHome?"vs":"@"} ${next.opponent}</div>
         <div class="meta">${fmtDate(next.date)} ${next.venue?("· "+next.venue):""} ${next.tv?("· "+next.tv):""}</div>
+        <div><a class="btn" target="_blank" rel="noopener" href="${ytSearchUrl(next.opponent,next.date)}">Highlights</a></div>
       </div>
     </div>` : `<div class="note">No upcoming games found.</div>`;
   $("#nextGame").querySelectorAll("img").forEach(imgFallback);
@@ -154,6 +165,7 @@ function renderSchedule(list){
         <div style="flex:1;min-width:220px">
           <div style="font-weight:800;overflow-wrap:anywhere">${g.isHome?"vs":"@"} ${g.opponent}</div>
           <div class="meta">${fmtDate(g.date)} ${g.venue?("· "+g.venue):""} ${g.tv?("· "+g.tv):""}</div>
+          <a class="btn" target="_blank" rel="noopener" href="${ytSearchUrl(g.opponent,g.date)}">Highlights</a>
         </div>
         <div class="right">${right}</div>
       </div>
@@ -196,6 +208,12 @@ function renderSchedule(list){
   lines.push("END:VCALENDAR");
   const icsUrl=URL.createObjectURL(new Blob([lines.join("\r\n")],{type:"text/calendar;charset=utf-8"}));
   $("#addAllBtn").onclick=()=>{ const a=document.createElement("a"); a.href=icsUrl; a.download="Florida_Gators_Basketball.ics"; document.body.appendChild(a); a.click(); a.remove(); };
+
+  // Wallpapers
+  $("#wallpapers").innerHTML = [
+    "https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg",
+    "https://upload.wikimedia.org/wikipedia/commons/f/ff/Florida_Gators_block_F.svg"
+  ].map(u=>`<img class="wall-img" loading="lazy" src="${u}" alt="Gators wallpaper">`).join("");
 }
 
 /* ========= Roster Rendering ========= */
@@ -219,14 +237,67 @@ function renderRoster(players){
   }
 }
 
-/* ========= Stats ========= */
-function renderLeaders(players){
+/* ========= Stats (this season only) ========= */
+async function computeSeasonAverages(games){
+  // Build per-player averages from completed games' box scores
+  const completed = games.filter(g=>g.myScore!=null&&g.oppScore!=null);
+  const agg = new Map(); // name -> {pts,reb,ast,fgm,fga,tpm,tpa,ftm,fta,gp}
+  for(const g of completed){
+    try{
+      const sum = await getJSON(ESPN_WEB + g.id);
+      const uf = (sum?.boxscore?.teams||[]).find(t=>String(t.team?.id)===String(TEAM_ID));
+      const players = uf?.players || [];
+      for(const p of players){
+        const name = p.athlete?.displayName; if(!name) continue;
+        const sraw = p.statistics?.[0]?.athletes?.[0]?.stats || p.statistics?.[0]?.stats || p.statistics?.stats || p.statistics || {};
+        // Try both array or object formats
+        let pts=0, reb=0, ast=0, fgm=0,fga=0,tpm=0,tpa=0,ftm=0,fta=0;
+        if(Array.isArray(sraw)){
+          const find = (k)=>{ const row = sraw.find(x=>new RegExp("^"+k+"[: ]","i").test(x)); return row? Number((row.split(":")[1]||"").trim()||0):0; };
+          pts=find("PTS"); reb=find("REB"); ast=find("AST");
+          const fg = (sraw.find(x=>/^FG[: ]/i.test(x))||"").split(":")[1]||"0-0"; [fgm,fga]=fg.split("-").map(Number);
+          const tp = (sraw.find(x=>/^3PT[: ]|^3P[: ]/i.test(x))||"").split(":")[1]||"0-0"; [tpm,tpa]=tp.split("-").map(Number);
+          const ft = (sraw.find(x=>/^FT[: ]/i.test(x))||"").split(":")[1]||"0-0"; [ftm,fta]=ft.split("-").map(Number);
+        }else if(typeof sraw==="object"){
+          pts=Number(sraw.PTS ?? sraw.points ?? 0);
+          reb=Number(sraw.REB ?? sraw.rebounds ?? 0);
+          ast=Number(sraw.AST ?? sraw.assists ?? 0);
+          if(sraw.fieldGoalsMade!=null){ fgm=Number(sraw.fieldGoalsMade); fga=Number(sraw.fieldGoalsAttempted||0); }
+          if(sraw.threePointFieldGoalsMade!=null){ tpm=Number(sraw.threePointFieldGoalsMade); tpa=Number(sraw.threePointFieldGoalsAttempted||0); }
+          if(sraw.freeThrowsMade!=null){ ftm=Number(sraw.freeThrowsMade); fta=Number(sraw.freeThrowsAttempted||0); }
+        }
+        if(!agg.has(name)) agg.set(name,{pts:0,reb:0,ast:0,fgm:0,fga:0,tpm:0,tpa:0,ftm:0,fta:0,gp:0});
+        const a=agg.get(name);
+        a.pts+=pts; a.reb+=reb; a.ast+=ast; a.fgm+=fgm; a.fga+=fga; a.tpm+=tpm; a.tpa+=tpa; a.ftm+=ftm; a.fta+=fta; a.gp+=1;
+      }
+    }catch{ /* ignore this game if ESPN summary fails */ }
+  }
+  const avgs = new Map(); // name -> {ppg,rpg,apg,fgp,tpp,ftp}
+  for(const [name,a] of agg.entries()){
+    const gp = Math.max(1,a.gp);
+    avgs.set(name,{
+      ppg: a.pts/gp,
+      rpg: a.reb/gp,
+      apg: a.ast/gp,
+      fgp: a.fga? (a.fgm/a.fga*100):0,
+      tpp: a.tpa? (a.tpm/a.tpa*100):0,
+      ftp: a.fta? (a.ftm/a.fta*100):0,
+    });
+  }
+  window._playerAverages = avgs;
+  return avgs;
+}
+
+function renderLeadersFromAverages(players, avgs){
   const leaders=$("#leaders"); leaders.innerHTML="";
-  // Without live player-by-player season splits, show a simple “top by role” placeholder (updates when you add stats)
-  const cats=[["Scoring","G/F"],["Rebounding","C/F"],["Assists","G"],["3P threat","G"],["Efficiency","F/C"],["FT","G"]];
-  cats.forEach(([lab,_])=>{
-    leaders.appendChild(el(`<div class="stat"><div class="t">${lab}</div><div class="v">${players[0]?.fullName||"—"}<br>—</div></div>`));
-  });
+  const get = (k)=>players
+    .map(p=>({p, v:(avgs.get(p.fullName)?.[k] ?? 0)}))
+    .sort((a,b)=>b.v - a.v)[0] || {p:{fullName:"—"}, v:0};
+  const cats=[["ppg","PPG"],["rpg","RPG"],["apg","APG"],["tpp","3P%"],["fgp","FG%"],["ftp","FT%"]];
+  for(const [k,lab] of cats){
+    const top=get(k);
+    leaders.appendChild(el(`<div class="stat"><div class="t">${lab}</div><div class="v">${top.p.fullName}<br>${top.v.toFixed(k==="ppg"||k==="rpg"||k==="apg"?1:1)}</div></div>`));
+  }
 }
 function renderTeamPtsChart(games){
   const ctx=$("#teamPtsChart").getContext("2d");
@@ -236,38 +307,20 @@ function renderTeamPtsChart(games){
   if(!completed.length){ ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height); ctx.font="14px system-ui"; ctx.fillText("No completed games yet",10,22); return; }
   window._ptsChart=new Chart(ctx,{type:"line",data:{labels:completed.map((g,i)=>`G${i+1}`),datasets:[{label:"Gators Pts",data:completed.map(g=>g.myScore)}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
 }
-
-/* ========= Props (Fun) ========= */
-// Build lines using recent games (last 6). If not enough, fallback to team baseline.
-async function fetchRecentPlayerAverages(games){
-  const completed = games.filter(g=>g.myScore!=null&&g.oppScore!=null).slice(-6);
-  if(!completed.length) return new Map();
-  const totals = new Map(); // key=name -> {sum,gp}
-  for(const g of completed){
-    try{
-      const sum = await getJSON(ESPN_WEB + g.id);
-      const uf = (sum?.boxscore?.teams||[]).find(t=>String(t.team?.id)===String(TEAM_ID));
-      const players = uf?.players || [];
-      for(const p of players){
-        const name = p.athlete?.displayName || "";
-        let pts = 0;
-        const statLine = p.statistics?.[0]?.stats || p.statistics?.stats || p.statistics || {};
-        if (Array.isArray(statLine)) {
-          const kv = String(statLine.find(s=>/^PTS[: ]/i.test(s))||"").split(":")[1];
-          pts = Number((kv||"").trim()||0);
-        } else if (typeof statLine === "object") {
-          pts = Number(statLine.PTS ?? statLine.points ?? 0);
-        }
-        if(!name) continue;
-        if(!totals.has(name)) totals.set(name,{sum:0,gp:0});
-        const row = totals.get(name); row.sum += (isNaN(pts)?0:pts); row.gp += 1;
-      }
-    }catch{/* ignore single game errors */}
-  }
-  const out = new Map();
-  for(const [name,row] of totals.entries()){ if(row.gp>0) out.set(name, row.sum/row.gp); }
-  return out; // Map(name -> avg points)
+function renderAdvancedTeam(games){
+  const adv=$("#advStats");
+  const comp=games.filter(g=>g.myScore!=null&&g.oppScore!=null);
+  if(!comp.length){ adv.innerHTML="<div class='note'>No completed games yet.</div>"; return; }
+  const ppg = comp.reduce((s,g)=>s+g.myScore,0)/comp.length;
+  const oppg= comp.reduce((s,g)=>s+g.oppScore,0)/comp.length;
+  adv.innerHTML = `
+    <div class="card">PPG: <strong>${ppg.toFixed(1)}</strong></div>
+    <div class="card">Opp PPG: <strong>${oppg.toFixed(1)}</strong></div>
+    <div class="card">Diff: <strong>${(ppg-oppg).toFixed(1)}</strong></div>
+  `;
 }
+
+/* ========= Props (Fun) – lines from this season’s averages ========= */
 function roundHalf(x){ return Math.round(Math.max(1.5,x)*2)/2; }
 function populatePropPlayerSelect(players){
   propPlayerSelect.innerHTML="";
@@ -275,12 +328,13 @@ function populatePropPlayerSelect(players){
   [...propPlayerSelect.options].slice(0,8).forEach(x=>x.selected=true);
 }
 function buildPropRow(player, line){
+  const id = `pick-${player.id}`;
   const row=el(`<div class="card prop-row" data-player="${player.fullName}">
     <div class="prop-title" style="font-weight:800;min-width:200px">${player.fullName}</div>
     <div class="prop-line">O/U: ${line.toFixed(1)}</div>
     <div class="prop-choices">
-      <label><input type="radio" name="pick-${player.id}" value="over"> Over</label>
-      <label><input type="radio" name="pick-${player.id}" value="under"> Under</label>
+      <label for="${id}-over"><input id="${id}-over" type="radio" name="${id}" value="over"> Over</label>
+      <label for="${id}-under"><input id="${id}-under" type="radio" name="${id}" value="under"> Under</label>
     </div>
   </div>`);
   return row;
@@ -291,25 +345,18 @@ async function generateProps(){
   const ids=[...propPlayerSelect.selectedOptions].map(o=>o.value);
   const selected = players.filter(p=>ids.includes(p.id));
   if(!selected.length){ toast("Pick at least one player"); return; }
-  propsWrap.innerHTML = "<div class='note'>Calculating lines…</div>";
-  let recentByName=new Map();
-  try{ recentByName = await fetchRecentPlayerAverages(window._latestGames||[]); }catch{ recentByName=new Map(); }
-  // team baseline
-  const comp = (window._latestGames||[]).filter(g=>g.myScore!=null);
-  const teamPts = comp.length? comp.reduce((s,g)=>s+g.myScore,0)/comp.length : 72;
+
+  propsWrap.innerHTML = "<div class='note'>Computing season averages…</div>";
+  const avgs = window._playerAverages || await computeSeasonAverages(window._latestGames||[]);
   propsWrap.innerHTML="";
   selected.forEach(p=>{
-    const avg = recentByName.get(p.fullName) ?? (teamPts/5);
+    const avg = avgs.get(p.fullName)?.ppg ?? 8; // safe default
     const line = roundHalf(avg);
     propsWrap.appendChild(buildPropRow(p, line));
   });
 }
 
 /* ========= Supabase: save picks + leaderboard ========= */
-// Expected tables (from earlier):
-// users(id uuid default, username text unique)
-// prop_picks(id, username text, player text, ou_line numeric, pick text, created_at timestamptz default now())
-// Optional view props_leaderboard(username, total_picks int)
 async function savePicks(){
   const username = (usernameInput.value||"").trim();
   if(!username){ toast("Enter a display name first"); usernameInput.focus(); return; }
@@ -320,14 +367,13 @@ async function savePicks(){
     const lineText = row.querySelector(".prop-line")?.textContent||"";
     const m = /O\/U:\s*([0-9.]+)/i.exec(lineText);
     const ou_line = m? Number(m[1]) : null;
-    const pick = row.querySelector("input[type=radio]:checked")?.value||null;
+    const id = "pick-" + (UF_ROSTER.find(p=>p.fullName===player)?.id||"x");
+    const pick = row.querySelector(`input[name="${id}"]:checked`)?.value||null;
     if(pick && ou_line!=null){ rows.push({ username, player, ou_line, pick }); }
   });
   if(!rows.length){ toast("Pick Over/Under first"); return; }
 
-  // ensure user exists
   await sb.from("users").upsert({ username }).select();
-
   const { error } = await sb.from("prop_picks").insert(rows);
   if(error){ toast("Could not save picks"); return; }
   toast("Picks saved ✓");
@@ -335,10 +381,10 @@ async function savePicks(){
 }
 async function loadLeaderboard(){
   const lb = $("#lbWrap"); lb.innerHTML = "<div class='note'>Loading leaderboard…</div>";
-  // If a view exists, prefer it; else aggregate total picks
+  // Prefer view if it exists
   let data=null, error=null;
-  ({ data, error } = await sb.from("props_leaderboard").select("*").order("total", { ascending:false }).limit(20));
-  if(error){ // fallback: aggregate prop_picks
+  ({ data, error } = await sb.from("props_leaderboard").select("*").order("total",{ascending:false}).limit(20));
+  if(error){
     const res = await sb.from("prop_picks").select("username, count:id").group("username").order("count",{ascending:false}).limit(20);
     data = res.data?.map(r=>({ username:r.username, total:r.count }))||[];
   }
@@ -366,7 +412,7 @@ async function loadAll(){
     refreshBtn.disabled=true; refreshBtn.textContent="…"; setHero(0);
 
     // Schedule
-    const sched = await getJSON(`${ESPN_BASE}/teams/${TEAM_ID}/schedule`);
+    const sched = await getJSON(`${ESPN_SITE}/teams/${TEAM_ID}/schedule`);
     const games = parseSchedule(sched);
     renderSchedule(games);
     window._latestGames = games;
@@ -374,14 +420,16 @@ async function loadAll(){
     // Roster
     renderRoster(UF_ROSTER);
 
-    // Stats
-    renderLeaders(UF_ROSTER);
+    // Stats from season games
+    const avgs = await computeSeasonAverages(games);
+    renderLeadersFromAverages(UF_ROSTER, avgs);
     renderTeamPtsChart(games);
+    renderAdvancedTeam(games);
 
     // News
     renderNews();
 
-    // Props controls
+    // Props controls + leaderboard
     populatePropPlayerSelect(UF_ROSTER);
     await loadLeaderboard();
 
