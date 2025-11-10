@@ -5,36 +5,40 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Gator Hoops</title>
   <meta name="theme-color" content="#0021A5"/>
-  <link rel="stylesheet" href="style.css?v=30"/>
+  <link rel="stylesheet" href="style.css?v=40"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header class="topbar">
+  <a href="#main" class="skip">Skip to content</a>
+
+  <header class="topbar" role="banner">
     <div class="topbar-inner">
       <div class="brand">
         <img class="brandmark" alt="UF Gators" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg">
         <h1>Gator Hoops</h1>
       </div>
       <div class="controls">
-        <button id="refreshBtn" type="button" title="Refresh">↻ Refresh</button>
+        <button id="refreshBtn" type="button" class="btn small" title="Refresh">↻ Refresh</button>
+        <button id="themeBtn" type="button" class="btn small" title="Toggle theme">☾</button>
       </div>
     </div>
   </header>
 
-  <div class="brands">
+  <div class="brands" aria-hidden="true">
     <img alt="UF" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Florida_Gators_gator_logo.svg">
     <img alt="SEC" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/6/65/Southeastern_Conference_logo.svg">
     <img alt="NCAA" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/4/43/NCAA_logo.svg">
   </div>
 
+  <!-- Hero: kept visually below the sticky header & above tabs, but does NOT capture clicks outside its area -->
   <section class="hero" aria-label="Highlights">
     <div class="carousel">
       <img id="heroImg" alt="Florida Gators Highlights"/>
-      <div class="shade"></div>
+      <div class="shade" aria-hidden="true"></div>
       <div class="caption">
         <div>
           <div class="badge">Go Gators 🐊</div>
-          <div class="kicker">Tap Prev/Next for more photos</div>
+          <div class="kicker">Prev/Next for more photos</div>
         </div>
         <div class="car-ctrls">
           <button id="prevBtn" class="pill gray" type="button"><span class="pill-dot"></span>Prev</button>
@@ -44,27 +48,36 @@
     </div>
   </section>
 
+  <!-- Tabs -->
   <nav class="tabs" role="tablist" aria-label="Sections">
-    <button type="button" class="tab" id="tab-schedule" aria-controls="panel-schedule" aria-selected="true">Schedule</button>
-    <button type="button" class="tab" id="tab-roster"   aria-controls="panel-roster"   aria-selected="false">Roster</button>
-    <button type="button" class="tab" id="tab-props"    aria-controls="panel-props"    aria-selected="false">Props (Fun)</button>
-    <button type="button" class="tab" id="tab-stats"    aria-controls="panel-stats"    aria-selected="false">Stats</button>
-    <button type="button" class="tab" id="tab-news"     aria-controls="panel-news"     aria-selected="false">News</button>
-    <button type="button" class="tab" id="tab-tickets"  aria-controls="panel-tickets"  aria-selected="false">Tickets</button>
+    <button type="button" class="tab" id="tab-schedule" role="tab" aria-controls="panel-schedule" aria-selected="true">Schedule</button>
+    <button type="button" class="tab" id="tab-roster"   role="tab" aria-controls="panel-roster"   aria-selected="false">Roster</button>
+    <button type="button" class="tab" id="tab-props"    role="tab" aria-controls="panel-props"    aria-selected="false">Props (Fun)</button>
+    <button type="button" class="tab" id="tab-stats"    role="tab" aria-controls="panel-stats"    aria-selected="false">Stats</button>
+    <button type="button" class="tab" id="tab-news"     role="tab" aria-controls="panel-news"     aria-selected="false">News</button>
+    <button type="button" class="tab" id="tab-tickets"  role="tab" aria-controls="panel-tickets"  aria-selected="false">Tickets</button>
   </nav>
 
-  <main>
+  <main id="main" tabindex="-1">
     <!-- Schedule -->
     <section id="panel-schedule" class="section active" role="tabpanel" aria-labelledby="tab-schedule">
       <button id="addAllBtn" class="allcal-btn" type="button">Add All Games to Calendar</button>
       <div id="nextGame" class="next-wrap"></div>
-      <div id="scheduleList" class="grid"></div>
+      <div id="scheduleList" class="grid">
+        <div class="skeleton card"></div>
+        <div class="skeleton card"></div>
+        <div class="skeleton card"></div>
+      </div>
     </section>
 
     <!-- Roster (UF official) -->
     <section id="panel-roster" class="section" role="tabpanel" aria-labelledby="tab-roster">
-      <div class="note">Roster powered by the official UF headshots. No ESPN dependency.</div>
-      <div id="rosterList" class="grid"></div>
+      <div class="note">Roster uses UF official headshots (no ESPN dependency).</div>
+      <div id="rosterList" class="grid">
+        <div class="skeleton card"></div>
+        <div class="skeleton card"></div>
+        <div class="skeleton card"></div>
+      </div>
     </section>
 
     <!-- Props -->
@@ -72,11 +85,11 @@
       <div class="card" style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <strong>Player Props (for fun)</strong>
-          <span class="note">Uses averages from the last 6 completed games (auto). If none, season average.</span>
+          <span class="note">Uses averages from the last 6 completed games; if none, season average.</span>
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <label>Players:
-            <select id="propPlayerSelect" multiple size="6" style="min-width:240px"></select>
+        <div class="row">
+          <label style="flex:1;min-width:240px">Players:
+            <select id="propPlayerSelect" multiple size="8" style="min-width:260px"></select>
           </label>
           <button id="makePropsBtn" class="btn primary" type="button">Generate</button>
         </div>
@@ -93,7 +106,7 @@
         </div>
         <div class="card" style="min-height:300px">
           <h3 style="margin:0 0 10px 0">Team Points by Game</h3>
-          <canvas id="teamPtsChart" height="260"></canvas>
+          <canvas id="teamPtsChart" height="260" aria-label="Line chart of team points by game"></canvas>
         </div>
       </div>
     </section>
@@ -117,10 +130,8 @@
     </section>
   </main>
 
-  <footer>
-    <small>Not affiliated with UF. Roster photos from UF’s official site (Sidearm). Team stats & scores from ESPN public JSON. Odds & props are for entertainment only.</small>
-  </footer>
+  <div id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=30"></script>
+  <script src="app.js?v=40"></script>
 </body>
 </html>
